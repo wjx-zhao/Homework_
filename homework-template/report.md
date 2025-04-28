@@ -201,6 +201,24 @@ Worst Case：反序排列下，每一輪都要將前 $i−1$ 個元素右移，�
 除了輸入本身使用的 $O(n)$，程式中動態配置 int[n+1] 也是 $O(n)$。
 額外常數空間：哨兵、迴圈變數等，均為 $O(1)$。
 
+## 計時方式探討說明
+衡量排序耗時用的是 C++11 的 <chrono>，程式碼出現在 averageCase 和 worstCase 中
+```cpp
+auto start = chrono::high_resolution_clock::now();
+insertionSort(arr, n);
+auto end   = chrono::high_resolution_clock::now();
+long long dt = chrono::duration_cast<chrono::microseconds>(end - start).count();
+
+```
+1. 時鐘選擇high_resolution_clock
+在大多數實作（如 MSVC）上等同於 steady_clock，底層呼叫 Windows 的 QueryPerformanceCounter，提供納秒或微秒級解析度，且不會受系統時間調整影響（monotonic）。
+duration_cast<chrono::microseconds>
+把時間差轉為微秒（μs）為單位。由於單次排序可能很快（尤其是小 n），微秒精度足以反映耗時。
+
+2. 精度與誤差解析度
+Windows 下 high_resolution_clock 解析度通常在 100 ns – 1 μs 之間（視硬體與驅動而定），當實際耗時低於解析度時，dt 可能為 0。
+重複測試以減少誤差，程式將同一筆輸入 重複排序 2500 次，再以 totalTime/REPS 取平均。
+
 ## 測試與驗證
 
 ### 測試案例
@@ -481,6 +499,22 @@ Worst Case：對於選擇首元素為 pivot，升冪或降冪輸入會觸發 $O(
 平均遞迴深度為 $O(\log n)$，最壞情況下遞迴深度為 $O(n)$。
 除遞迴堆疊外，額外使用 $O(n)$ 動態陣列；無其他大型額外空間。
 
+## 計時方式探討說明
+衡量排序耗時用的是 C++11 的 <chrono>，程式碼出現在 averageCase 和 worstCase 中
+```cpp
+auto start = chrono::high_resolution_clock::now();
+quickSort(arr, 1, n);
+auto end   = chrono::high_resolution_clock::now();
+auto elapsed_us = chrono::duration_cast<chrono::microseconds>(end - start).count();
+```
+1. 時鐘（Clock）選擇high_resolution_clock「最高解析度」，實際上在多數編譯器（MSVC、GCC）下，它要麼別名為 steady_clock（保證不被系統時間調整影響），要麼指向解析度最高的那個時鐘。適合短到中程式區段（μs、ns 級）之測量。
+steady_clock
+保證「單調遞增」（monotonic），適合衡量間隔，不會受到使用者或 NTP 同步導致的系統時間跳動影響。
+
+2.單位與解析度
+解析度:Windows 下 high_resolution_clock 底層常使用 QueryPerformanceCounter，解析度可達 100ns～1μs。
+duration_cast<chrono::microseconds>將 time_point 差值轉為微秒（μs）。
+
 ## 測試與驗證
 
 ### 測試案例
@@ -731,6 +765,7 @@ vector<int> genRandom(int n)
     return v;
 }
 
+//多次試驗找最慢樣本
 vector<int> genWorstCaseSample(int n, int trials = 20)
 {
     long long maxT = -1;
@@ -758,7 +793,7 @@ vector<int> genWorstCaseSample(int n, int trials = 20)
 void worstCase(int n)
 {
     cout << "===== Worst Case (random) Merge Sort n=" << n << " =====\n";
-    auto sample = genWorstCaseSample(n);
+    auto sample = genWorstCaseSample(n);//最壞樣本的最終測量
     printMemoryUsage();      // 排序前的記憶體使用量
 
     int* arr = new int[n + 1];
@@ -823,6 +858,23 @@ int main()
 2.空間複雜度
 額外空間：每次呼叫 mergeSort 時會配置大小為 $n+1$ 的暫存陣列 tmp，故空間複雜度為 $O(n)$。
 遞迴堆疊：分治遞迴深度為 $\log_2 n$，故堆疊空間為 $O(\log n)$。
+
+## 計時方式探討說明
+衡量排序耗時用的是 C++11 的 <chrono>，程式碼出現在 averageCase 和 worstCase 中
+```cpp
+auto t0 = chrono::high_resolution_clock::now();
+mergeSort(arr, n);
+auto t1 = chrono::high_resolution_clock::now();
+long long dt = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+
+```
+1. 時鐘類型與選擇high_resolution_clock[解析度最高]，實作上通常等同於 steady_clock（保證單調、不受系統時間調整影響）或直接對應到最精細的硬體計時器。
+   其底層在 Windows 上會呼叫 QueryPerformanceCounter，解析度可達 數百奈秒 至 微秒。
+steady_clock
+明確保證「單調遞增」（monotonic），也是測量時間間隔的推薦選擇，不會因系統時鐘校正導致向前或向後跳動。
+單位與精度
+2.解析度與單位(microseconds)
+使用 duration_cast<chrono::microseconds> 來把時間差轉成微秒（μs），適合大多數排序測量（通常耗時在幾十到幾萬微秒之間）。
 
 ## 測試與驗證
 
@@ -1155,6 +1207,20 @@ Working Set Size 隨 n 緩增，大致等於 4 bytes×n（整數陣列）加上
 Peak Working Set 較 Working Set 稍高，因為多次 new[]/delete[] 及 vector 內部重配置會暫時佔用更多記憶體。
 Pagefile Usage 變化不大，表示記憶體釋放後能及時回收，無明顯洩漏。
 
+## 計時方式探討說明
+衡量排序耗時用的是 C++11 的 <chrono>，程式碼出現在 averageCase 和 worstCase 中
+```cpp
+auto t0 = chrono::high_resolution_clock::now();
+heapSort(arr, n);
+auto t1 = chrono::high_resolution_clock::now();
+long long dt = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+
+```
+1. 時鐘（Clock）選擇high_resolution_clock 名為「最高解析度」，實作上通常等同於 steady_clock，底層在 Windows 會呼叫 QueryPerformanceCounter，保證單調（monotonic）不受系統時間調整影響。
+steady_clock
+明確保證「不會倒退」，最適合做耗時測量
+2.解析度與單位
+(microseconds)用 duration_cast<microseconds>，對於耗時數十至數千微秒的排序演算法非常合適，解析度通常在 100ns–1μs。
 ## 測試與驗證
 
 ### 測試案例
@@ -1172,6 +1238,43 @@ Pagefile Usage 變化不大，表示記憶體釋放後能及時回收，無明�
 ### 圖表
 ![Heap Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Heap%20Sort.png)
 
+### 測試資料產生細節
+1.隨機數產生器:一次性以 random_device 取得非決定性種子，初始化 64 位元 Mersenne Twister 引擎，保證每次程式執行都能產生不同的亂數序列。
+```cpp
+static mt19937_64 rng(random_device{}());
+```
+2.產生單一測試樣本:對長度為 n 的向量，每個元素在 [0,1 000 000] 區間均勻分佈。
+```cpp
+vector<int> genRandom(int n) {
+    uniform_int_distribution<int> dist(0, 1000000);
+    vector<int> v(n);
+    for (int& x : v) x = dist(rng);
+    return v;
+}
+```
+3.尋找最壞樣本
+(1)trials = 20：預設會隨機生成 20 組長度為 n 的輸入。
+(2)每次測試都將剛產生的向量複製到 buf，呼叫 heapSort 並用 <chrono> 計時。
+(3)最後保留那組排序耗時最久的向量作為「最壞測試樣本」。
+```cpp
+vector<int> genWorstCaseSample(int n, int trials = 20) {
+    long long maxT = -1;
+    vector<int> worst;
+    int* buf = new int[n+1];
+    for (int t = 0; t < trials; ++t) {
+        auto v = genRandom(n);
+        // 複製到 buf[1..n]，排序並計時
+        ...
+        if (dt > maxT) { maxT = dt; worst = move(v); }
+    }
+    delete[] buf;
+    return worst;
+}
+```
+4.最壞情況測量
+```cpp
+auto sample = genWorstCaseSample(n);
+```
 
 ### 編譯與執行指令
 
@@ -1210,3 +1313,364 @@ printMemoryUsage 輸出顯示動態配置與釋放後的 Working Set、Pagefile 
 Adjust 與 heapSort 函式邏輯扁平，可清楚演示「建堆」與「反覆取頂」兩大步驟。
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
+## **Composite Sort**
+
+## 程式實作
+
+```cpp
+//使用到的標頭
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <sstream>
+#include <chrono>
+#include <algorithm>
+#include <random>
+#include <functional>
+#include <climits>
+using namespace std;
+```
+```cpp
+// InsertionSort
+void insertionSort(int* a, int n)
+{
+    for (int i = 2; i <= n; ++i)
+    {
+        int key = a[i];
+        a[0] = key;        // 哨兵
+        int j = i - 1;
+        while (a[j] > key)
+        {
+            a[j + 1] = a[j];
+            --j;
+        }
+        a[j + 1] = key;
+    }
+}
+```
+```cpp
+// QuickSortDet / QuickSortRand
+static mt19937_64 qs_rng(random_device{}());
+
+// 固定中點 pivot 分割 (Hoare)
+int partition_det(int* a, int left, int right)
+{
+    int mid = left + (right - left) / 2;
+    swap(a[left], a[mid]);
+    int pivot = a[left], i = left, j = right + 1;
+    a[0] = pivot; a[right + 1] = pivot;
+    do {
+        do { ++i; } while (a[i] < pivot);
+        do { --j; } while (a[j] > pivot);
+        if (i < j) swap(a[i], a[j]);
+    } while (i < j);
+    swap(a[left], a[j]);
+    return j;
+}
+
+// 固定中點 pivot + 尾端遞迴優化
+void quickSortDet(int* a, int left, int right)
+{
+    while (left < right)
+    {
+        int p = partition_det(a, left, right);
+        if (p - left < right - p) {
+            quickSortDet(a, left, p - 1);
+            left = p + 1;
+        }
+        else
+        {
+            quickSortDet(a, p + 1, right);
+            right = p - 1;
+        }
+    }
+}
+
+// 隨機 pivot 分割 (Hoare)
+int partition_rand(int* a, int left, int right)
+{
+    uniform_int_distribution<int> dist(left, right);
+    swap(a[left], a[dist(qs_rng)]);
+    int pivot = a[left], i = left, j = right + 1;
+    a[0] = pivot; a[right + 1] = pivot;
+    do
+    {
+        do { ++i; } while (a[i] < pivot);
+        do { --j; } while (a[j] > pivot);
+        if (i < j) swap(a[i], a[j]);
+    } while (i < j);
+    swap(a[left], a[j]);
+    return j;
+}
+
+// 隨機 pivot + 尾端遞迴優化
+void quickSortRand(int* a, int left, int right)
+{
+    while (left < right)
+    {
+        int p = partition_rand(a, left, right);
+        if (p - left < right - p)
+        {
+            quickSortRand(a, left, p - 1);
+            left = p + 1;
+        }
+        else
+        {
+            quickSortRand(a, p + 1, right);
+            right = p - 1;
+        }
+    }
+}
+
+```
+```cpp
+// MergeSort
+template<class T>
+void Merge(T* initList, T* mergedList, const int l, const int m, const int n)
+{
+    int i1 = l, i2 = m + 1, iResult = l;
+    for (; i1 <= m && i2 <= n; ++iResult) {
+        if (initList[i1] <= initList[i2]) mergedList[iResult] = initList[i1++];
+        else                               mergedList[iResult] = initList[i2++];
+    }
+    copy(initList + i1, initList + m + 1, mergedList + iResult);
+    iResult += (m - i1 + 1);
+    copy(initList + i2, initList + n + 1, mergedList + iResult);
+}
+
+void mergeSortRec(int* a, int* tmp, int l, int r)
+{
+    if (l >= r) return;
+    int m = (l + r) / 2;
+    mergeSortRec(a, tmp, l, m);
+    mergeSortRec(a, tmp, m + 1, r);
+    Merge(a, tmp, l, m, r);
+    copy(tmp + l, tmp + r + 1, a + l);
+}
+
+// 方便呼叫：只分配一次靜態暫存區
+void mergeSort(int* a, int n)
+{
+    static int* tmpBuf = nullptr;
+    static int  bufSize = 0;
+    if (bufSize < n + 2)
+    {
+        delete[] tmpBuf;
+        bufSize = n + 2;
+        tmpBuf = new int[bufSize];
+    }
+    mergeSortRec(a, tmpBuf, 1, n);
+}
+```
+```cpp
+// HeapSort
+template<class T>
+void Adjust(T* a, const int root, const int n)
+{
+    T e = a[root];
+    int j = 2 * root;
+    for (; j <= n; j *= 2)
+    {
+        if (j < n && a[j] < a[j + 1]) ++j;
+        if (e >= a[j]) break;
+        a[j / 2] = a[j];
+    }
+    a[j / 2] = e;
+}
+
+template<class T>
+void heapSort(T* a, const int n)
+{
+    for (int i = n / 2; i >= 1; --i) Adjust(a, i, n);
+    for (int i = n - 1; i >= 1; --i)
+    {
+        swap(a[1], a[i + 1]);
+        Adjust(a, 1, i);
+    }
+}
+```
+```cpp
+// Read_AverageCase
+vector<int> readAverageData(int n)
+{
+    string filename = to_string(n) + ".txt";
+    ifstream fin(filename);
+    if (!fin)
+    {
+        cerr << "無法打開 " << filename << "\n";
+        return {};
+    }
+    string line; getline(fin, line);
+    istringstream iss(line);
+    vector<int> v(n);
+    for (int i = 0; i < n; ++i) iss >> v[i];
+    return v;
+}
+
+// 隨機數與最壞情境產生 
+static mt19937_64 rng(random_device{}());
+
+vector<int> genRandom(int n)
+{
+    uniform_int_distribution<int> dist(0, 1000000);
+    vector<int> v(n);
+    for (int& x : v) x = dist(rng);
+    return v;
+}
+
+```
+```cpp
+// 生成 MergeSort 最慢輸入
+vector<int> genMergeWorst(int n)
+{
+    long long maxT = -1;
+    vector<int> worst;
+    int* tmp = new int[n + 2];
+    for (int t = 0; t < 20; ++t)
+    {
+        auto v = genRandom(n);
+        for (int i = 0; i < n; ++i) tmp[i + 1] = v[i];
+        auto t0 = chrono::high_resolution_clock::now();
+        mergeSort(tmp, n);
+        auto t1 = chrono::high_resolution_clock::now();
+        long long dt = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+        if (dt > maxT)
+        {
+            maxT = dt;
+            worst = move(v);
+        }
+    }
+    delete[] tmp;
+    return worst;
+}
+
+// 生成 HeapSort 最慢輸入
+vector<int> genHeapWorst(int n)
+{
+    long long maxT = -1;
+    vector<int> worst;
+    int* buf = new int[n + 2];
+    for (int t = 0; t < 20; ++t)
+    {
+        auto v = genRandom(n);
+        for (int i = 0; i < n; ++i) buf[i + 1] = v[i];
+        auto t0 = chrono::high_resolution_clock::now();
+        heapSort(buf, n);
+        auto t1 = chrono::high_resolution_clock::now();
+        long long dt = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+        if (dt > maxT)
+        {
+            maxT = dt;
+            worst = move(v);
+        }
+    }
+    delete[] buf;
+    return worst;
+}
+
+// 測量平均情況耗時
+double measureAvg(int n, function<void(int*, int)> sorter)
+{
+    auto data = readAverageData(n);
+    if ((int)data.size() != n) return 1e18;
+    const int REPS = 2500;
+    long long total = 0;
+    int* buf = new int[n + 2];
+    for (int rep = 0; rep < REPS; ++rep)
+    {
+        for (int i = 0; i < n; ++i) buf[i + 1] = data[i];
+        auto t0 = chrono::high_resolution_clock::now();
+        sorter(buf, n);
+        auto t1 = chrono::high_resolution_clock::now();
+        total += chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+    }
+    delete[] buf;
+    return double(total) / REPS;
+}
+
+// 測量最壞情況耗時
+long long measureWorst(int n, function<void(int*, int)> sorter, function<vector<int>(int)> genWorst)
+{
+    auto data = genWorst(n);
+    int* buf = new int[n + 2];
+    for (int i = 0; i < n; ++i) buf[i + 1] = data[i];
+    auto t0 = chrono::high_resolution_clock::now();
+    sorter(buf, n);
+    auto t1 = chrono::high_resolution_clock::now();
+    delete[] buf;
+    return chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+}
+```
+```cpp
+// Composite 平均情況
+void compositeAverageCase(int n)
+{
+    cout << "=== Composite Average Case (n=" << n << ") ===\n";
+    double tIns = measureAvg(n, insertionSort);
+    double tQck = measureAvg(n, [](int* a, int nn) { quickSortDet(a, 1, nn); });
+    double tMrg = measureAvg(n, mergeSort);
+    double tHep = measureAvg(n, heapSort<int>);
+    double best = tIns; string name = "Insertion";
+    if (tQck < best) { best = tQck; name = "Quick"; }
+    if (tMrg < best) { best = tMrg; name = "Merge"; }
+    if (tHep < best) { best = tHep; name = "Heap"; }
+    cout << "最快算法：" << name << " Sort，平均 " << best << " μs\n\n";
+}
+
+// Composite 最壞情況
+void compositeWorstCase(int n)
+{
+    cout << "=== Composite Worst Case (n=" << n << ") ===\n";
+    long long tIns = measureWorst(n, insertionSort, [](int nn)
+        {
+            vector<int> v(nn);
+            for (int i = 0; i < nn; ++i) v[i] = nn - i;
+            return v;
+        });
+    long long tQck = measureWorst(n, [](int* a, int nn) { quickSortRand(a, 1, nn); }, [](int nn)
+        {
+            vector<int> v(nn);
+            for (int i = 0; i < nn; ++i) v[i] = i + 1;
+            return v;
+        });
+    long long tMrg = measureWorst(n, mergeSort, genMergeWorst);
+    long long tHep = measureWorst(n, heapSort<int>, genHeapWorst);
+    long long best = tIns; string name = "Insertion";
+    if (tQck < best) { best = tQck; name = "Quick"; }
+    if (tMrg < best) { best = tMrg; name = "Merge"; }
+    if (tHep < best) { best = tHep; name = "Heap"; }
+    cout << "最快算法：" << name << " Sort，耗時 " << best << " μs\n\n";
+}
+
+int main()
+{
+    int sizes[] = { 500,1000,2000,3000,4000,5000 };
+    cout << "資料筆數:\n";
+    for (int i = 0; i < 6; ++i) cout << (i + 1) << ". " << sizes[i] << "   ";
+    cout << "\n請選擇(1~6): ";
+    int c; cin >> c;
+    if (c < 1 || c > 6) return 1;
+    int n = sizes[c - 1];
+
+    cout << "選(1=Average Case, 2=Worst Case): ";
+    int m; cin >> m;
+    if (m == 1) compositeAverageCase(n);
+    else if (m == 2) compositeWorstCase(n);
+    else {
+        cerr << "輸入錯誤,請輸入1或2決定模式\n";
+        return 1;
+    }
+
+    system("pause");
+    return 0;
+}
+```
+Composite Sort優化
+依照目前的程式下去比較有點不公平，會有單演算法一直是最快的
+如果要公平的比較
+1.Merge Sort的暫存陣列只配置一次
+在main()開一個int*tmp = new int[max_n+2]，把它傳進mergeSortRec，避免反覆new/delete
+2.把QuickSort的亂數抽樣移到genWorstCase之外
+只花WorstCase資料產生時用亂數，在測平均時改用固定pivot，減少呼叫亂數的花費
+3.少跑幾次平均測資
+雖然2500次能更平均更穩定，但次數太多時，動態配置開銷比排序演算法成本還高
