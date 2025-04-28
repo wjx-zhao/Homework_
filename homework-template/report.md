@@ -494,6 +494,12 @@ Worst Case：對於選擇首元素為 pivot，升冪或降冪輸入會觸發 $O(
 | 4000    |      449.1      | 11241          |
 | 5000    |      578.788    | 13795          |
 
+
+###圖表
+
+![Quick Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Quick%20Sort.png)
+
+
 ### 編譯與執行指令
 
 ```shell
@@ -833,6 +839,10 @@ int main()
 | 4000    |      449.1      | 11241          |
 | 5000    |      578.788    | 13795          |
 
+###圖表
+![Merge Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Merge%20Sort.png)
+
+
 ### 編譯與執行指令
 
 ```shell
@@ -1159,6 +1169,11 @@ Pagefile Usage 變化不大，表示記憶體釋放後能及時回收，無明�
 | 3000    |      463.245    | 867            |
 | 4000    |      665.06     | 1133           |
 | 5000    |      854.194    | 1482           |
+
+
+###圖表
+![Heap Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Heap%20Sort.png)
+
 
 ### 編譯與執行指令
 
