@@ -215,7 +215,7 @@ Worst Case：反序排列下，每一輪都要將前 $i−1$ 個元素右移，�
 | 5000    |      19401.6    | 31262          |
 
 ### 圖表
-![測試圖表](output.png)
+![Insertion Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Insertion%20Sort.png)
 
 
 ### 編譯與執行指令
