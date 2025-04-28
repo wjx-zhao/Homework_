@@ -299,9 +299,21 @@ int main()
     int n = sizes[c - 1];
 
     cout << "選(1=Average Case, 2=Worst Case): ";
-    int m; cin >> m;
-    if (m == 1) compositeAverageCase(n);
-    else         compositeWorstCase(n);
+    int m;
+    cin >> m;
+    if (m == 1)
+    {
+        compositeAverageCase(n);
+    }
+    else if (m == 2)
+    {
+        compositeWorstCase(n);
+    }
+    else
+    {
+        cerr << "輸入錯誤,請輸入1或2決定模式" << endl;
+        return 1;
+    }
 
     system("pause");
     return 0;
