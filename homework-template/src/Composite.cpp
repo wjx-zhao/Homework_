@@ -30,7 +30,8 @@ void insertionSort(int* a, int n)
 static mt19937_64 qs_rng(random_device{}());
 
 // 固定中點 pivot 分割 (Hoare)
-int partition_det(int* a, int left, int right) {
+int partition_det(int* a, int left, int right) 
+{
     int mid = left + (right - left) / 2;
     swap(a[left], a[mid]);
     int pivot = a[left], i = left, j = right + 1;
@@ -45,14 +46,17 @@ int partition_det(int* a, int left, int right) {
 }
 
 // 固定中點 pivot + 尾端遞迴優化
-void quickSortDet(int* a, int left, int right) {
-    while (left < right) {
+void quickSortDet(int* a, int left, int right) 
+{
+    while (left < right) 
+    {
         int p = partition_det(a, left, right);
         if (p - left < right - p) {
             quickSortDet(a, left, p - 1);
             left = p + 1;
         }
-        else {
+        else 
+        {
             quickSortDet(a, p + 1, right);
             right = p - 1;
         }
@@ -60,12 +64,14 @@ void quickSortDet(int* a, int left, int right) {
 }
 
 // 隨機 pivot 分割 (Hoare)
-int partition_rand(int* a, int left, int right) {
+int partition_rand(int* a, int left, int right) 
+{
     uniform_int_distribution<int> dist(left, right);
     swap(a[left], a[dist(qs_rng)]);
     int pivot = a[left], i = left, j = right + 1;
     a[0] = pivot; a[right + 1] = pivot;
-    do {
+    do 
+    {
         do { ++i; } while (a[i] < pivot);
         do { --j; } while (a[j] > pivot);
         if (i < j) swap(a[i], a[j]);
@@ -75,14 +81,18 @@ int partition_rand(int* a, int left, int right) {
 }
 
 // 隨機 pivot + 尾端遞迴優化
-void quickSortRand(int* a, int left, int right) {
-    while (left < right) {
+void quickSortRand(int* a, int left, int right) 
+{
+    while (left < right) 
+    {
         int p = partition_rand(a, left, right);
-        if (p - left < right - p) {
+        if (p - left < right - p) 
+        {
             quickSortRand(a, left, p - 1);
             left = p + 1;
         }
-        else {
+        else 
+        {
             quickSortRand(a, p + 1, right);
             right = p - 1;
         }
@@ -114,13 +124,15 @@ void mergeSortRec(int* a, int* tmp, int l, int r)
 }
 
 // 方便呼叫：只分配一次靜態暫存區
-void mergeSort(int* a, int n) {
-    static int* tmpBuf = nullptr;  // <<< CHANGED
-    static int  bufSize = 0;       // <<< CHANGED
-    if (bufSize < n + 2) {         // <<< CHANGED
-        delete[] tmpBuf;           // <<< CHANGED
-        bufSize = n + 2;           // <<< CHANGED
-        tmpBuf = new int[bufSize];// <<< CHANGED
+void mergeSort(int* a, int n) 
+{
+    static int* tmpBuf = nullptr;  
+    static int  bufSize = 0;       
+    if (bufSize < n + 2) 
+    {         
+        delete[] tmpBuf;           
+        bufSize = n + 2;           
+        tmpBuf = new int[bufSize];
     }
     mergeSortRec(a, tmpBuf, 1, n);
 }
@@ -130,8 +142,9 @@ template<class T>
 void Adjust(T* a, const int root, const int n)
 {
     T e = a[root];
-    int j = 2 * root;             // <<< CHANGED
-    for (; j <= n; j *= 2) {
+    int j = 2 * root;             
+    for (; j <= n; j *= 2) 
+    {
         if (j < n && a[j] < a[j + 1]) ++j;
         if (e >= a[j]) break;
         a[j / 2] = a[j];
@@ -143,7 +156,8 @@ template<class T>
 void heapSort(T* a, const int n)
 {
     for (int i = n / 2; i >= 1; --i) Adjust(a, i, n);
-    for (int i = n - 1; i >= 1; --i) {
+    for (int i = n - 1; i >= 1; --i) 
+    {
         swap(a[1], a[i + 1]);
         Adjust(a, 1, i);
     }
@@ -154,7 +168,8 @@ vector<int> readAverageData(int n)
 {
     string filename = to_string(n) + ".txt";
     ifstream fin(filename);
-    if (!fin) {
+    if (!fin) 
+    {
         cerr << "無法打開 " << filename << "\n";
         return {};
     }
@@ -182,14 +197,16 @@ vector<int> genMergeWorst(int n)
     long long maxT = -1;
     vector<int> worst;
     int* tmp = new int[n + 2];
-    for (int t = 0; t < 20; ++t) {
+    for (int t = 0; t < 20; ++t)
+        {
         auto v = genRandom(n);
         for (int i = 0; i < n; ++i) tmp[i + 1] = v[i];
         auto t0 = chrono::high_resolution_clock::now();
         mergeSort(tmp, n);
         auto t1 = chrono::high_resolution_clock::now();
         long long dt = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
-        if (dt > maxT) {
+        if (dt > maxT) 
+        {
             maxT = dt;
             worst = move(v);
         }
@@ -204,14 +221,16 @@ vector<int> genHeapWorst(int n)
     long long maxT = -1;
     vector<int> worst;
     int* buf = new int[n + 2];
-    for (int t = 0; t < 20; ++t) {
+    for (int t = 0; t < 20; ++t) 
+    {
         auto v = genRandom(n);
         for (int i = 0; i < n; ++i) buf[i + 1] = v[i];
         auto t0 = chrono::high_resolution_clock::now();
         heapSort(buf, n);
         auto t1 = chrono::high_resolution_clock::now();
         long long dt = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
-        if (dt > maxT) {
+        if (dt > maxT) 
+        {
             maxT = dt;
             worst = move(v);
         }
@@ -228,7 +247,8 @@ double measureAvg(int n, function<void(int*, int)> sorter)
     const int REPS = 2500;
     long long total = 0;
     int* buf = new int[n + 2];
-    for (int rep = 0; rep < REPS; ++rep) {
+    for (int rep = 0; rep < REPS; ++rep) 
+    {
         for (int i = 0; i < n; ++i) buf[i + 1] = data[i];
         auto t0 = chrono::high_resolution_clock::now();
         sorter(buf, n);
@@ -240,9 +260,7 @@ double measureAvg(int n, function<void(int*, int)> sorter)
 }
 
 // 測量最壞情況耗時
-long long measureWorst(int n,
-    function<void(int*, int)> sorter,
-    function<vector<int>(int)> genWorst)
+long long measureWorst(int n,function<void(int*, int)> sorter,function<vector<int>(int)> genWorst)
 {
     auto data = genWorst(n);
     int* buf = new int[n + 2];
@@ -273,15 +291,14 @@ void compositeAverageCase(int n)
 void compositeWorstCase(int n)
 {
     cout << "=== Composite Worst Case (n=" << n << ") ===\n";
-    long long tIns = measureWorst(n, insertionSort,
-        [](int nn) {
+    long long tIns = measureWorst(n, insertionSort,[](int nn) 
+    {
             vector<int> v(nn);
             for (int i = 0; i < nn; ++i) v[i] = nn - i;
             return v;
         });
-    long long tQck = measureWorst(n,
-        [](int* a, int nn) { quickSortRand(a, 1, nn); },
-        [](int nn) {
+    long long tQck = measureWorst(n,[](int* a, int nn) { quickSortRand(a, 1, nn); },[](int nn) 
+    {
             vector<int> v(nn);
             for (int i = 0; i < nn; ++i) v[i] = i + 1;
             return v;
