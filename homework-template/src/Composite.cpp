@@ -193,10 +193,14 @@ vector<int> genHeapWorst(int n)
 double measureAvg(int n, function<void(int*, int)> sorter) 
 {
     auto data = readAverageData(n);
-    if ((int)data.size() != n) return 1e18;
-    const int REPS = 2500;
-    long long total = 0;
-    int* buf = new int[n + 2];
+    if ((int)data.size() != n) return 1e18;   // 如果讀取失敗或資料長度不符，就回傳一個極大值，讓這個算法不會被選為最快
+
+    
+    const int REPS = 2500;  // 定義平均次數，跑越多次統計越穩定
+    long long total = 0;   // 用來累加所有跑 REPS 次所花費的總時間
+    
+    int* buf = new int[n + 2];   // 為了兼容 QuickSort 可能會寫入 buf[n+1]，確保不會越界
+
     for (int rep = 0; rep < REPS; ++rep) 
     {
         for (int i = 0; i < n; ++i) buf[i + 1] = data[i];
@@ -205,60 +209,81 @@ double measureAvg(int n, function<void(int*, int)> sorter)
         auto t1 = chrono::high_resolution_clock::now();
         total += chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
     }
+    
     delete[] buf;
-    return double(total) / REPS;
+    
+    return double(total) / REPS;  // 計算並回傳平均耗時
 }
 
 long long measureWorst(int n,function<void(int*, int)> sorter,function<vector<int>(int)> genWorst) 
 {
     auto data = genWorst(n);
     int* buf = new int[n + 2];
-    for (int i = 0; i < n; ++i) buf[i + 1] = data[i];
+
+    // 將最壞情境資料複製到 buf[1..n]
+    // buf[0] 與 buf[n+1] 可當作哨兵或暫存空間
+    for (int i = 0; i < n; ++i) buf[i + 1] = data[i];   
+    
     auto t0 = chrono::high_resolution_clock::now();
-    sorter(buf, n);
+    sorter(buf, n);   // 執行排序函式
     auto t1 = chrono::high_resolution_clock::now();
+    
     delete[] buf;
-    return chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+
+    return chrono::duration_cast<chrono::microseconds>(t1 - t0).count();   // 回傳兩個時間點之間的差值（微秒）
 }
 
 
 void compositeAverageCase(int n) 
 {
     cout << "=== Composite Average Case (n=" << n << ") ===\n";
+
+    //分別把四種排序方式帶進測量程式
     double tIns = measureAvg(n, insertionSort);
     double tQck = measureAvg(n, [](int* a, int nn) { quickSort(a, 1, nn); });
     double tMrg = measureAvg(n, mergeSort);
     double tHep = measureAvg(n, heapSort<int>);
-    double best = tIns; string name = "Insertion";
-    if (tQck < best) { best = tQck; name = "Quick"; }
-    if (tMrg < best) { best = tMrg; name = "Merge"; }
-    if (tHep < best) { best = tHep; name = "Heap"; }
+    
+    double best = tIns; string name = "Insertion";   //找出四者中耗時最少的,預設為InsertionSort
+    if (tQck < best) { best = tQck; name = "Quick"; }   // 若QuickSort耗時更少，更新 best 及 name
+    if (tMrg < best) { best = tMrg; name = "Merge"; }   // 若MergeSort耗時更少，更新 best 及 name
+    if (tHep < best) { best = tHep; name = "Heap"; }   // 若HeapSort耗時更少，更新 best 及 name
+    
     cout << "最快算法：" << name << " Sort，平均 " << best << " μs\n\n";
 }
 
 void compositeWorstCase(int n) 
 {
     cout << "=== Composite Worst Case (n=" << n << ") ===\n";
+
+    // InsertionSort worseCase
     long long tIns = measureWorst(n, insertionSort,[](int nn) 
     {
             vector<int> v(nn);
             for (int i = 0; i < nn; ++i) v[i] = nn - i;
             return v;
     });
-    
+
+    // QuickSort worseCase
     long long tQck = measureWorst(n,[](int* a, int nn) { quickSort(a, 1, nn); },[](int nn) 
     {
             vector<int> v(nn);
             for (int i = 0; i < nn; ++i) v[i] = i + 1;
             return v;
     });
-    
+
+    // MergeSort worseCase
     long long tMrg = measureWorst(n, mergeSort, genMergeWorst);
+
+    // HeapSort worseCase
     long long tHep = measureWorst(n, heapSort<int>, genHeapWorst);
+
+    //同AverageCase的作法
     long long best = tIns; string name = "Insertion";
     if (tQck < best) { best = tQck; name = "Quick"; }
     if (tMrg < best) { best = tMrg; name = "Merge"; }
     if (tHep < best) { best = tHep; name = "Heap"; }
+    
     cout << "最快算法：" << name << " Sort，耗時 " << best << " μs\n\n";
 }
 
