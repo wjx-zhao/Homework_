@@ -499,22 +499,6 @@ Worst Case：對於選擇首元素為 pivot，升冪或降冪輸入會觸發 $O(
 平均遞迴深度為 $O(\log n)$，最壞情況下遞迴深度為 $O(n)$。
 除遞迴堆疊外，額外使用 $O(n)$ 動態陣列；無其他大型額外空間。
 
-## 計時方式探討說明
-衡量排序耗時用的是 C++11 的 <chrono>，程式碼出現在 averageCase 和 worstCase 中
-```cpp
-auto start = chrono::high_resolution_clock::now();
-quickSort(arr, 1, n);
-auto end   = chrono::high_resolution_clock::now();
-auto elapsed_us = chrono::duration_cast<chrono::microseconds>(end - start).count();
-```
-1. 時鐘（Clock）選擇high_resolution_clock「最高解析度」，實際上在多數編譯器（MSVC、GCC）下，它要麼別名為 steady_clock（保證不被系統時間調整影響），要麼指向解析度最高的那個時鐘。適合短到中程式區段（μs、ns 級）之測量。
-steady_clock
-保證「單調遞增」（monotonic），適合衡量間隔，不會受到使用者或 NTP 同步導致的系統時間跳動影響。
-
-2.單位與解析度
-解析度:Windows 下 high_resolution_clock 底層常使用 QueryPerformanceCounter，解析度可達 100ns～1μs。
-duration_cast<chrono::microseconds>將 time_point 差值轉為微秒（μs）。
-
 ## 測試與驗證
 
 ### 測試案例
@@ -1207,20 +1191,6 @@ Working Set Size 隨 n 緩增，大致等於 4 bytes×n（整數陣列）加上
 Peak Working Set 較 Working Set 稍高，因為多次 new[]/delete[] 及 vector 內部重配置會暫時佔用更多記憶體。
 Pagefile Usage 變化不大，表示記憶體釋放後能及時回收，無明顯洩漏。
 
-## 計時方式探討說明
-衡量排序耗時用的是 C++11 的 <chrono>，程式碼出現在 averageCase 和 worstCase 中
-```cpp
-auto t0 = chrono::high_resolution_clock::now();
-heapSort(arr, n);
-auto t1 = chrono::high_resolution_clock::now();
-long long dt = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
-
-```
-1. 時鐘（Clock）選擇high_resolution_clock 名為「最高解析度」，實作上通常等同於 steady_clock，底層在 Windows 會呼叫 QueryPerformanceCounter，保證單調（monotonic）不受系統時間調整影響。
-steady_clock
-明確保證「不會倒退」，最適合做耗時測量
-2.解析度與單位
-(microseconds)用 duration_cast<microseconds>，對於耗時數十至數千微秒的排序演算法非常合適，解析度通常在 100ns–1μs。
 ## 測試與驗證
 
 ### 測試案例
