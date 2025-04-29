@@ -1636,11 +1636,11 @@ int main()
 }
 ```
 Composite Sort優化
-依照目前的程式下去比較有點不公平，會有單演算法一直是最快的
-如果要公平的比較
+依照目前的程式下去比較有點不公平，會有單演算法一直是最快的  
+如果要公平的比較  
 1.Merge Sort的暫存陣列只配置一次
-在main()開一個int*tmp = new int[max_n+2]，把它傳進mergeSortRec，避免反覆new/delete
+在main()開一個int*tmp = new int[max_n+2]，把它傳進mergeSortRec，避免反覆new/delete  
 2.把QuickSort的亂數抽樣移到genWorstCase之外
-只花WorstCase資料產生時用亂數，在測平均時改用固定pivot，減少呼叫亂數的花費
+只花WorstCase資料產生時用亂數，在測平均時改用固定pivot，減少呼叫亂數的花費  
 3.少跑幾次平均測資
 雖然2500次能更平均更穩定，但次數太多時，動態配置開銷比排序演算法成本還高
