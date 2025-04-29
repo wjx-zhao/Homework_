@@ -13,33 +13,14 @@
 
 -「哨兵法插入排序」（Sentinel Insertion Sort）為核心  
 -Case選擇  
-    >- Average Case：從 <n>.txt 檔案讀入一列長度為 n 的整數，重複排序多次取平均時間。  
-    >- Worst Case：在程式中生成**反序**排列 [n, n−1, …, 1]，並測量單次排序時間。  
--紀錄排序前、後（含釋放記憶體前）記憶體使用量。
+    >Average Case：從 <n>.txt 檔案讀入一列長度為 n 的整數，重複排序多次取平均時間。  
+    >Worst Case：在程式中生成**反序**排列 [n, n−1, …, 1]，並測量單次排序時間。  
+-紀錄排序前、後（含釋放記憶體前）記憶體使用量。  
+  
+### 程式實作
 
-### 解題策略
-
-1.插入排序主體
-使用 a[0] 作為哨兵（Sentinel），將當前欲插入的元素暫存於 a[0]，以避免每次迴圈都要檢查邊界。
-從第二個元素開始，將 key = a[i] 與前一個元素比較，若前一個元素較大則後移，直到找到適當位置插入 key。
-
-2.Average Case
-以 to_string(n) + ".txt" 作為檔名開檔，讀取單行 n 個整數。
-重複 REPS 次：將原始資料複製至動態陣列 arr[1..n]，呼叫 insertionSort(arr, n)，並累加耗時。
-最後計算並輸出平均執行時間。
-
-3.Worst Case
-動態配置陣列 arr[1..n]，並填入反序 [n, n−1, …, 1]。
-單次呼叫 insertionSort(arr, n)，測量並輸出執行時間。
-
-4.記憶體量測
-使用 GetProcessMemoryInfo 取得並輸出「Working Set Size」、「Peak Working Set Size」以及「Pagefile Usage」。
-在排序前、排序後（未釋放）和釋放記憶體後各呼叫一次，以觀察記憶體變化。
-
-## 程式實作
-
-以下為主要程式碼：
-
+以下為主要程式碼：  
+使用的標頭  
 ```cpp
 這是使用到的標頭檔
 
@@ -52,6 +33,7 @@
 #include <Psapi.h>
 using namespace std;
 ```
+記憶體使用量計算程式碼  
 ```cpp
 //計算記憶體使用量(使用助教提供方式)
 void printMemoryUsage() 
@@ -65,6 +47,9 @@ void printMemoryUsage()
     cout << "----------------------------------------------------------" << endl;
 }
 ```
+使用 a[0] 作為哨兵（Sentinel），將當前欲插入的元素暫存於 a[0]，以避免每次迴圈都要檢查邊界。    
+從第二個元素開始，將 key = a[i] 與前一個元素比較，若前一個元素較大則後移，直到找到適當位置插入 key。  
+  
 ```cpp
 // 哨兵法插入排序：對 a[1..n] 做排序，a[0] 作為哨兵
 void insertionSort(int* a, int n) 
@@ -83,6 +68,8 @@ void insertionSort(int* a, int n)
     }
 }
 ```
+  
+Average Case:已讀檔的方式讀取測資(預設測資都為正整數)，執行2500次的循環後將執行時間平均  
 ```cpp
 // Average Case：使用讀檔的方式(為了使用同一筆測資算出平均的準確度)
 //讀取 "<n>.txt" n 個整數，重複排序 REPS 次並取平均
@@ -143,7 +130,9 @@ void averageCase(int n)
     delete[] arr;
     printMemoryUsage();               // 釋放後的記憶體使用量
 }
-```
+```  
+  
+動態配置陣列 arr[1..n]，並填入反序 [n, n−1, …, 1]。單次呼叫 insertionSort(arr, n)，測量並輸出執行時間。  
 ```cpp
 
 // Worst Case：生成反序 [n, n-1, ..., 1]，排序一次
@@ -168,7 +157,9 @@ void worstCase(int n)
     delete[] arr;
     printMemoryUsage();               // 釋放後的記憶體使用量
 }
-```
+```  
+  
+主程式碼:輸入1~6代表的資料筆數和Case方式選擇  
 ```cpp
 int main() {
     int sizes[] = { 500,1000,2000,3000,4000,5000 };
@@ -200,7 +191,7 @@ int main() {
 
 ## 效能分析
 
-1.時間複雜度
+1.時間複雜度  
 Average Case：隨機資料下，勢必多次元素移動，平均約 $O(n^2)$。
 Worst Case：反序排列下，每一輪都要將前 $i−1$ 個元素右移，時間複雜度為 $O(n^2)$。
 
