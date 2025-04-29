@@ -2,17 +2,20 @@
 # 41243203
 
 作業一
-空行
----
+
+本作業要求實現Insertion Sort(插入排序)、Quick Sort(快速排序)、Merge Sort(合併排序)、Heap Sort(堆積排序)、Composite Sort(複合排序)的Average Case和Worst Case所耗費的時間和空間複雜度
+
+---  
 
 ## **Insertion Sort**
 
 ## 解題說明
 
-本程式以「哨兵法插入排序」（Sentinel Insertion Sort）為核心，搭配檔案讀取與記憶體使用量偵測，實現以下兩種測試模式：
-Average Case：從 <n>.txt 檔案讀入一列長度為 n 的整數，重複排序多次取平均時間。
-Worst Case：在程式中自行生成反序排列 [n, n−1, …, 1]，並測量單次排序時間。
-同時，於每個排序前、後（含釋放記憶體前）呼叫 Windows API 讀取並輸出目前進程的記憶體使用狀況。
+-「哨兵法插入排序」（Sentinel Insertion Sort）為核心  
+-Case選擇
+    - Average Case：從 <n>.txt 檔案讀入一列長度為 n 的整數，重複排序多次取平均時間。  
+    -Worst Case：在程式中生成**反序**排列 [n, n−1, …, 1]，並測量單次排序時間。
+-紀錄排序前、後（含釋放記憶體前）記憶體使用量。
 
 ### 解題策略
 
