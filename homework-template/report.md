@@ -9,7 +9,7 @@
 
 ## **Insertion Sort**
 
-## 解題說明
+### 解題說明
 
 -「哨兵法插入排序」（Sentinel Insertion Sort）為核心  
 -Case選擇
