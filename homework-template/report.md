@@ -11,11 +11,11 @@
 
 ### 解題說明
 
-- **哨兵法插入排序(Sentinel Insertion Sort)**為核心  
+- **哨兵法**插入排序(Sentinel Insertion Sort)**為核心  
 - Case 選擇  
-  1. Average Case：從 `<n>.txt` 檔案讀入一列長度為 `n` 的整數，重複排序多次取平均時間。  
-  2. Worst Case：在程式中生成 **反序** 排列 `[n, n−1, …, 1]`，並測量單次排序時間。  
-- 紀錄排序前、後（含釋放記憶體前）記憶體使用量。  
+  1. Average Case：從 `<n>.txt` 檔案讀入一列長度為 `n` 的整數，重複排序多次取平均時間   
+  2. Worst Case：在程式中生成 **反序** 排列 `[n, n−1, …, 1]`，並測量單次排序時間  
+- 紀錄排序前、後（含釋放記憶體前）記憶體使用量   
   
 ### 程式實作
 
@@ -69,7 +69,7 @@ void insertionSort(int* a, int n)
 }
 ```
   
-Average Case:已讀檔的方式讀取測資(預設測資都為正整數)，執行2500次的循環後將執行時間平均  
+Average Case:已讀檔的方式讀取測資(預設測資都為正整數)，執行2500次(可直接更改變數REPS改變執行次數)的循環後將執行時間平均  
 ```cpp
 // Average Case：使用讀檔的方式(為了使用同一筆測資算出平均的準確度)
 //讀取 "<n>.txt" n 個整數，重複排序 REPS 次並取平均
@@ -132,7 +132,7 @@ void averageCase(int n)
 }
 ```  
   
-動態配置陣列 arr[1..n]，並填入反序 [n, n−1, …, 1]。單次呼叫 insertionSort(arr, n)，測量並輸出執行時間。  
+動態配置陣列 arr[1..n]，並填入**反序** [n, n−1, …, 1]。單次呼叫 insertionSort(arr, n)，測量並輸出執行時間。  
 ```cpp
 
 // Worst Case：生成反序 [n, n-1, ..., 1]，排序一次
@@ -189,37 +189,27 @@ int main() {
 }
 ```
 
-## 效能分析
+### 效能分析
 
-1.時間複雜度  
-Average Case：隨機資料下，勢必多次元素移動，平均約 $O(n^2)$。
-Worst Case：反序排列下，每一輪都要將前 $i−1$ 個元素右移，時間複雜度為 $O(n^2)$。
+##### 時間複雜度  
+Average Case = $O(n²)$  
+- 輸入是隨機排列，第 ` i ` 輪平均約要搬移 i/2 次  
+- 分析: $Ta(n)$ = $Ta​(n−1)$ + β*i/2 ⇒ $Ta(n)$ = $O((1+2+···+n)/2)$ = $O(n²)$  
 
-2.空間複雜度
-除了輸入本身使用的 $O(n)$，程式中動態配置 int[n+1] 也是 $O(n)$。
-額外常數空間：哨兵、迴圈變數等，均為 $O(1)$。
+Worst Case = $O(n²)$  
+- 反序排列下，每次插入都要把先前所有元素逐一後移，等於第 i 輪做了 i 次比較與搬移  
+- 分析: $Tw​(n)$ = $Tw​(n−1)$ +αn ⇒ $Tw(n)$ = $O(1+2+···+n)$ = $O(n²)$  
 
-## 計時方式探討說明
-衡量排序耗時用的是 C++11 的 <chrono>，程式碼出現在 averageCase 和 worstCase 中
-```cpp
-auto start = chrono::high_resolution_clock::now();
-insertionSort(arr, n);
-auto end   = chrono::high_resolution_clock::now();
-long long dt = chrono::duration_cast<chrono::microseconds>(end - start).count();
+#### 空間複雜度  
+Average Case = $O(n)$  
+- 分析:動態配置 `int*arr` 長度(n+1) ⇒ $O(n)$  
 
-```
-1. 時鐘選擇high_resolution_clock
-在大多數實作（如 MSVC）上等同於 steady_clock，底層呼叫 Windows 的 QueryPerformanceCounter，提供納秒或微秒級解析度，且不會受系統時間調整影響（monotonic）。
-duration_cast<chrono::microseconds>
-把時間差轉為微秒（μs）為單位。由於單次排序可能很快（尤其是小 n），微秒精度足以反映耗時。
+Worst Case = $O(n)$    
+- 分析: 動態配置 `int*arr` ⇒ $O(n)$  
 
-2. 精度與誤差解析度
-Windows 下 high_resolution_clock 解析度通常在 100 ns – 1 μs 之間（視硬體與驅動而定），當實際耗時低於解析度時，dt 可能為 0。
-重複測試以減少誤差，程式將同一筆輸入 重複排序 2500 次，再以 totalTime/REPS 取平均。
+### 測試與驗證
 
-## 測試與驗證
-
-### 測試案例
+#### 測試案例
 
 | 測試案例 | Average Case(μs)| Worst Sort(μs) |
 |-------- |-----------------|----------------|
@@ -230,83 +220,34 @@ Windows 下 high_resolution_clock 解析度通常在 100 ns – 1 μs 之間（�
 | 4000    |      7542.73    | 14954          |
 | 5000    |      19401.6    | 31262          |
 
-### 圖表
-![Insertion Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Insertion%20Sort.png)
+#### 測試結果範例  
+![InsertionSort_A](<https://github.com/wjx-zhao/data1/blob/4622439096734b94a739a512aa0bad27003b2302/InsertionSort_A.jpg> "InsertionSort_A")  
 
+#### 圖表
+![Insertion Sort](<https://raw.githubusercontent.com/Lin-3203/image/main/Insertion%20Sort.png>)  
 
-### 編譯與執行指令
+### 申論及開發報告
 
-```shell
-$ g++ -std=c++17 -O2 sentinel_sort.cpp -o sentinel_sort.exe -lpsapi
-$ sentinel_sort.exe
+1.演算法簡潔易懂:邏輯演算方式非常直觀  
 
-```
+2.實作與除錯成本低:結構扁平、分支少，不需額外大型資料結構  
 
-### 結論
+3.適用於中小規模或近乎已排序資料  
+- 對於筆數在數千筆以內的小型資料集，插入排序在常數因子上表現不錯  
+- 資料若已部分排序（或幾乎有序），插入排序的效能可逼近 $O(n)$，非常高效  
 
-1.功能正確性
-程式能夠正確讀取檔案並執行 Average Case（重複多次並取平均）及 Worst Case（反序一次）兩種測試模式，排序結果均符合預期。
-
-2.時間複雜度驗證
-實測結果隨著資料規模由 500 → 5000 增大，執行時間呈現近似二次函數的增長趨勢，與插入排序 $O(n^2)$ 的理論複雜度相符。
-
-3.記憶體使用情況
-動態配置的陣列大小隨 $n$ 緩步增加，排序前後與釋放後的 Working Set、Pagefile Usage 變化量有限，顯示程式在處理完畢後能正常回收記憶體，無明顯記憶體洩漏。
-
-4.適用範圍
-對於資料筆數在數千筆以內的中小型應用，哨兵法插入排序結合本程式架構，既簡潔又易於測量，適合作為教學示例或簡易需求。
-當資料規模超過 10K 以上，建議改採 $O(n\log n)$ 的排序演算法（如 Quick Sort、Heap Sort 或 Merge Sort），以獲得更佳效能。
-
-## 申論及開發報告
-
-### 選擇插入排序的原因
-
-1.演算法簡潔易懂
-插入排序的核心邏輯與數學公式 $\Sigma(n)=n+\Sigma(n-1)$ 類似，能迅速理解「將新元素插入已排序子序列」的概念。
-
-2.實作與除錯成本低
-完全以原地（in-place）方式運作，不需額外大型資料結構。
-結構扁平、分支少，方便在邏輯中插入計時與記憶體量測程式碼。
-
-3.適用於中小規模或近乎已排序資料
-對於筆數在數千筆以內的小型資料集，插入排序在常數因子上表現不錯。
-資料若已部分排序（或幾乎有序），插入排序的效能可逼近 $O(n)$，非常高效。
-
-4.穩定排序
-插入排序會保留相等鍵值元素的原始相對順序，適合後續需要保持穩定性的應用場景。
-
-5.可深度優化的邊界檢查
-本範例採用哨兵（sentinel）技巧，將待插入值暫存於 a[0]，免去每次迴圈都要檢查 j > 0，不僅簡化程式，也稍微提升了迴圈效率。
-
--------------------------------------------------------------------------------------------------------------------------------------
 
 ## **Quick Sort**
 
-## 解題說明
+### 解題說明
+- 遞迴分治:對`left..j-1`與`j+1..right`子陣列遞迴呼叫 quickSort，直至子陣列長度≤1。  
+- 只對較小子陣列遞迴，其餘以迴圈處理，可控制遞迴深度，避免呼叫堆疊爆增  
+- Case 選擇  
+  1. Average Case：從 `<n>.txt` 檔案讀入一列長度為 `n` 的整數，重複排序多次取平均時間  
+  2. Worst Case：將排序邏輯反轉，逆推出Worst Case  
+- 紀錄排序前、後（含釋放記憶體前）記憶體使用量  
 
-本程式是一個快速排序（Quick Sort），並結合檔案讀取與記憶體使用量量測，完成以下兩種測試模式：
-
-1.Average Case：從 <n>.txt 讀入一列長度為 n 的整數，重複 REPS 次排序並計算平均耗時。
-2.Worst Case：生成已排序升冪資料（對於選取 pivot = a[left] 而言即為最壞情況），執行一次排序並測量耗時。
-
-### 解題策略
-
-1.遞迴分治
-對 left..j-1 與 j+1..right 子陣列遞迴呼叫 quickSort，直至子陣列長度≤1。
-
-2.Average Case 測試
-開啟 <n>.txt，讀取單行 n 個整數至 orig 向量。
-重複 REPS 次：將 orig 複製至動態陣列 arr[1..n]，呼叫 quickSort(arr,1,n)，並累計單次耗時。
-輸出平均耗時與各階段記憶體使用量（排序前、排序後、釋放後）。
-
-3.Worst Case 測試
-動態配置 arr[1..n] 為升冪序列 [1,2,…,n]。
-單次呼叫 quickSort(arr,1,n)，測量並輸出耗時及記憶體使用量。
-
-4.記憶體量測
-透過 Windows PSAPI (GetProcessMemoryInfo) 取得並輸出「Working Set Size」、「Peak Working Set Size」、「Pagefile Usage」，分別在關鍵階段呼叫。
-
-## 程式實作
+### 程式實作
 
 以下為主要程式碼：
 
@@ -487,19 +428,32 @@ int main()
 }
 ```
 
-## 效能分析
+### 效能分析
 
-1.時間複雜度
-Average Case：期望為 $O(n\log n)$，但受 REPS 迴圈影響實測需乘以常數。
-Worst Case：對於選擇首元素為 pivot，升冪或降冪輸入會觸發 $O(n^2)$。
+#### 時間複雜度  
+Average Case = $O(nlogn)$  
+- 當 pivot 每次大致能把子陣列對半分割，遞迴深度 ≈ $log n$ ，且每層需 $O(n)$ 處理，所以為 $O(nlogn)$  
+- 分析: $Ta(n)$ = $2Ta(n/2)$ + $cn% ⇒ $Ta(n)$ = $O(nlogn)$  
+Worst Case = $O(n²)$  
+- 每次選擇的 pivot 恰好是子陣列的最小值，導致分割不平衡。左子陣列長度為 0，右子陣列長度為 $n−1$
+- 分析: $Tw(n)$ = $Tw(n-1)$ + $cn$ ⇒ $Tw(n)$ = $O(n²)$  
 
-2.空間複雜度
-平均遞迴深度為 $O(\log n)$，最壞情況下遞迴深度為 $O(n)$。
-除遞迴堆疊外，額外使用 $O(n)$ 動態陣列；無其他大型額外空間。
+#### 空間複雜度
+Average Case = $O(n)$  
+- 分析:  
+動態配置 `int arr[n+2]` ⇒ $O(n)$  
+呼叫推疊 ⇒ $O(logn)$  
+整體 ⇒ $O(n)$ + $O(logn)$ = $O(n)$  
 
-## 測試與驗證
+Worst Case = $O(n)$    
+- 分析:  
+動態配置 `int arr[n+2]` ⇒ $O(n)$  
+呼叫推疊 ⇒ $O(n)$  
+整體 ⇒ $O(n)$ + $O(n)$ = $O(n)$ 
 
-### 測試案例
+### 測試與驗證
+
+#### 測試案例
 
 | 測試案例 | Average Case(μs)| Worst Sort(μs) |
 |-------- |-----------------|----------------|
@@ -510,17 +464,11 @@ Worst Case：對於選擇首元素為 pivot，升冪或降冪輸入會觸發 $O(
 | 4000    |      449.1      | 11241          |
 | 5000    |      578.788    | 13795          |
 
+#### 測試結果範例
+  
+
 ### 圖表
 ![Quick Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Quick%20Sort.png)
-
-
-### 編譯與執行指令
-
-```shell
-$ g++ -std=c++17 -O2 quick_sort.cpp -o quick_sort.exe -lpsapi
-$ quick_sort.exe
-
-```
 
 ### 結論
 
