@@ -212,7 +212,7 @@ Worst Case = $O(n)$
 
 ### 測試案例
 
-| 測試案例 | Average Case(μs)| Worst Sort(μs) |
+| 測試案例 | Average Case(μs)| Worst Case(μs) |
 |-------- |-----------------|----------------|
 | 500     |      143.928    | 372            |
 | 1000    |      505.721    | 1626           |
@@ -453,7 +453,7 @@ Worst Case = $O(n)$
 
 ### 測試案例
 
-| 測試案例 | Average Case(μs)| Worst Sort(μs) |
+| 測試案例 | Average Case(μs)| Worst Case(μs) |
 |-------- |-----------------|----------------|
 | 500     |      17.4244    | 364            |
 | 1000    |      44.8904    | 897            |
@@ -748,21 +748,22 @@ Worst Case = $O(n)$
 
 ### 測試案例
 
-| 測試案例 | Average Case(μs)| Worst Sort(μs) |
+| 測試案例 | Average Case(μs)| Worst Case(μs) |
 |-------- |-----------------|----------------|
-| 500     |      17.4244    | 364            |
-| 1000    |      44.8904    | 897            |
-| 2000    |      173.566    | 3842           |
-| 3000    |      350.953    | 10034          |
-| 4000    |      449.1      | 11241          |
-| 5000    |      578.788    | 13795          |
+| 500     |      17.4244    | 157            |
+| 1000    |      44.8904    | 289            |
+| 2000    |      173.566    | 652            |
+| 3000    |      350.953    | 1028           |
+| 4000    |      449.1      | 1453           |
+| 5000    |      578.788    | 1395           |
 
 
 ### 測試結果範例  
 ![MergeSort_A](<https://github.com/wjx-zhao/data1/blob/8ab4e63de24819376d82bdd0326eb798bd338b5d/MergeSort_A.jpg> "MergeSort_A")  
 
-### 圖表
-![Merge Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Merge%20Sort.png)
+### 圖
+![m.jpg](<https://github.com/wjx-zhao/data1/blob/6ee8d2ea3ee5c25260c9f70d16384e5c67d343dc/m.jpg> "m.jpg")  
+
 
 ## 申論及開發報告
 1.穩定性：能保留相等元素的原始順序，適用於需要穩定排序的場景  
@@ -1053,7 +1054,7 @@ Worst Case = $O(1)$
 
 ### 測試案例
 
-| 測試案例 | Average Case(μs)| Worst Sort(μs) |
+| 測試案例 | Average Case(μs)| Worst Case(μs) |
 |-------- |-----------------|----------------|
 | 500     |      29.6936    | 87             |
 | 1000    |      84.5648    | 205            |
@@ -1451,7 +1452,7 @@ int main()
 
 ### 測試案例
 
-| 測試案例 | Average Case(μs)| Worst Sort(μs) |
+| 測試案例 | Average Case(μs)| Worst Case(μs) |
 |-------- |-----------------|----------------|
 | 500     |      8.1964(QuickSort)    |        32(HeapSort)     |
 | 1000    |      41.2788(QuickSort)    |        79(HeapSort)     |
@@ -1469,4 +1470,13 @@ int main()
 ### Composite Sort優化  
 若依照之前的程式下去比較有點不公平，會有單演算法一直是最快的，如果要公平的比較  
 1. Merge Sort的暫存陣列只配置一次  
-2. 把QuickSort的亂數抽樣移到genWorstCase之外:只花WorstCase資料產生時用亂數，在測平均時改用固定pivot，減少呼叫亂數的花費  
+2. 把QuickSort的亂數抽樣移到genWorstCase之外:只花WorstCase資料產生時用亂數，在測平均時改用固定pivot，減少呼叫亂數的花費
+
+##總結
+
+###四種排序Worst Case比較
+Average Case
+![Average.jpg](<https://github.com/wjx-zhao/data1/blob/3f0961bd7084b8ff1e4150dd045b036cdd673814/Average.jpg> "Average.jpg")  
+
+Worst Case  
+![Worst_case.jpg](<https://github.com/wjx-zhao/data1/blob/3689225a3e32aa4a606e4092169c0fb8ab1b9ca9/Worst_case.jpg> "Worst_case.jpg")  
