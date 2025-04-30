@@ -194,18 +194,20 @@ int main() {
 ##### 時間複雜度  
 Average Case = $O(n²)$  
 - 輸入是隨機排列，第 ` i ` 輪平均約要搬移 i/2 次  
-- 分析: $Ta(n)$ = $Ta​(n−1)$ + β*i/2 ⇒ $Ta(n)$ = $O((1+2+···+n)/2)$ = $O(n²)$  
+- 分析: $Ta(n)$ = $Ta​(n−1)$ + $β*i/2$ ⇒ $Ta(n)$ = $O((1+2+···+n)/2)$ = $O(n²)$  
 
 Worst Case = $O(n²)$  
 - 反序排列下，每次插入都要把先前所有元素逐一後移，等於第 i 輪做了 i 次比較與搬移  
-- 分析: $Tw​(n)$ = $Tw​(n−1)$ +αn ⇒ $Tw(n)$ = $O(1+2+···+n)$ = $O(n²)$  
+- 分析: $Tw​(n)$ = $Tw​(n−1)$ + $αn$ ⇒ $Tw(n)$ = $O(1+2+···+n)$ = $O(n²)$  
 
 #### 空間複雜度  
 Average Case = $O(n)$  
-- 分析:動態配置 `int*arr` 長度(n+1) ⇒ $O(n)$  
+- 動態配置 `int*arr` 長度(n+1)  
+- 分析: $Sa(n)$ = $O(n)$  
 
 Worst Case = $O(n)$    
-- 分析: 動態配置 `int*arr` ⇒ $O(n)$  
+- 動態配置 `int*arr` ⇒ $O(n)$  
+- 分析: $Sw(n)$ = $O(n)$  
 
 ### 測試與驗證
 
@@ -240,7 +242,7 @@ Worst Case = $O(n)$
 ## **Quick Sort**
 
 ### 解題說明
-- 遞迴分治:對`left..j-1`與`j+1..right`子陣列遞迴呼叫 quickSort，直至子陣列長度≤1。  
+- 分治遞迴(Divide and Conquer):對`left..j-1`與`j+1..right`子陣列遞迴呼叫 quickSort，直至子陣列長度≤1。  
 - 只對較小子陣列遞迴，其餘以迴圈處理，可控制遞迴深度，避免呼叫堆疊爆增  
 - Case 選擇  
   1. Average Case：從 `<n>.txt` 檔案讀入一列長度為 `n` 的整數，重複排序多次取平均時間  
@@ -434,22 +436,21 @@ int main()
 Average Case = $O(nlogn)$  
 - 當 pivot 每次大致能把子陣列對半分割，遞迴深度 ≈ $log n$ ，且每層需 $O(n)$ 處理，所以為 $O(nlogn)$  
 - 分析: $Ta(n)$ = $2Ta(n/2)$ + $cn% ⇒ $Ta(n)$ = $O(nlogn)$  
+
 Worst Case = $O(n²)$  
 - 每次選擇的 pivot 恰好是子陣列的最小值，導致分割不平衡。左子陣列長度為 0，右子陣列長度為 $n−1$
 - 分析: $Tw(n)$ = $Tw(n-1)$ + $cn$ ⇒ $Tw(n)$ = $O(n²)$  
 
 #### 空間複雜度
 Average Case = $O(n)$  
-- 分析:  
-動態配置 `int arr[n+2]` ⇒ $O(n)$  
-呼叫推疊 ⇒ $O(logn)$  
-整體 ⇒ $O(n)$ + $O(logn)$ = $O(n)$  
+- 動態配置 `int arr[n+2]` ⇒ $O(n)$  
+- 呼叫推疊 ⇒ $O(logn)$  
+- 分析: $Sa(n)$ = $Sd(n)$ + $Ss(logn)$ = $O(n)$ + $O(n)$ = $O(n)$  
 
-Worst Case = $O(n)$    
-- 分析:  
-動態配置 `int arr[n+2]` ⇒ $O(n)$  
-呼叫推疊 ⇒ $O(n)$  
-整體 ⇒ $O(n)$ + $O(n)$ = $O(n)$ 
+Worst Case = $O(n)$   
+- 動態配置 `int arr[n+2]` ⇒ $O(n)$  
+- 呼叫推疊 ⇒ $O(n)$  
+- 分析: $Sw(n)$ = $Sd(n)$ + $Ss(n)$ = $O(n)$ + $O(n)$ = $O(n)$  
 
 ### 測試與驗證
 
@@ -465,84 +466,34 @@ Worst Case = $O(n)$
 | 5000    |      578.788    | 13795          |
 
 #### 測試結果範例
-  
+![QuickSort_A](<https://github.com/wjx-zhao/data1/blob/bc652be7bcd38f48e35dba28272d7d9faa6937e8/QuickSort_A.jpg> "QuickSort_A")  
 
-### 圖表
+#### 圖表
 ![Quick Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Quick%20Sort.png)
 
-### 結論
+### 申論及開發報告
 
-1.功能正確
-程式能順利執行 Quick Sort 的 Average Case（重複多次取平均）與 Worst Case（升冪輸入最壞情況）測試，並正確輸出時間與記憶體使用量。
+1.平均效能卓越:隨機或平均情況下具有 $O(nlogn)$ 的時間複雜度，對中大型資料集的排序效能遠優於 $O(n²)$ 的演算法  
 
-2.時間複雜度驗證
-Average Case：實測結果顯示平均耗時成長趨勢近似 $O(n\log n)$。
-Worst Case：在已排序升冪輸入下，耗時呈現近似 $O(n^2)$，符合理論預期。
+2.節省記憶體開銷:僅需常數級額外空間（遞迴堆疊除外），不會像 Merge Sort 那樣需要額外的暫存陣列。  
 
-3.記憶體使用狀況
-動態陣列在排序前後與釋放後的 Working Set、Pagefile Usage 變化合理，無明顯記憶體洩漏現象。
-
-4.遞迴深度與穩定性
-固定選擇首元素為 pivot 會在最壞情況下導致遞迴深度退化至 $O(n)$，容易觸發 Stack Overflow。
-
-## 申論及開發報告
-
-### 選擇快速排序的原因
-
-1.平均效能卓越
-Quick Sort 在隨機或平均情況下具有 $O(n\log n)$ 的時間複雜度，對中大型資料集的排序效能遠優於 $O(n^2)$ 的演算法。
-
-2.原地（In-Place）排序
-僅需常數級額外空間（遞迴堆疊除外），不會像 Merge Sort 那樣需要額外的暫存陣列，節省記憶體開銷。
-
-3.分治結構易於優化
-可以透過尾遞迴優化、隨機化 pivot、三數取中等技術，控制最壞情況遞迴深度並進一步提升穩定性與實務效能。
-
-4.實作簡潔、教學示範性強
-Partition 的原理直觀、程式碼扁平；結合哨兵技巧後，更能示範邊界檢查優化的常見做法。
-
-5.高度可擴充
-在現有架構下，只需替換 quickSort 核心即能比較其他排序演算法；也可將同一份測量程式用於 Heap Sort、Merge Sort 等，實現模組化效能評測。
-
-6.優良的記憶體與快取表現
-原地交換、局部性原則（Locality of Reference）使得 Quick Sort 在現代 CPU 快取架構下擁有良好效能，常被用於標準庫實作。
-
--------------------------------------------------------------------------------------------------------------------------------------
+3.提升穩定性與實務效能:可以透過尾遞迴優化、隨機化 pivot、三數取中等技術，控制最壞情況遞迴深度。  
 
 ## **Merge Sort**
 
-## 解題說明
+### 解題說明
+- 分治遞迴(Divide and Conquer):將陣列區間 [l,r] 分成 [l,m] 與 [m+1,r] 兩半，遞迴排序後再合併。  
 
-1.Average Case 測試
-從 <n>.txt 單行讀入長度為 n 的整數資料，重複 REPS 次排序並計算平均耗時。
+- Merge函式:Merge(initList, mergedList, l, m, r)：利用兩個指標同時掃描已排序的左右子陣列，將較小值依序放入 mergedList[l..r]，最後複製剩餘元素。
 
-2.Worst Case 測試
-隨機產生多組長度為 n 的向量，選出排序時間最長的那一組，對其執行一次排序並測量最壞情況耗時。
+- Case 選擇  
+  1. Average Case：從 `<n>.txt` 檔案讀入一列長度為 `n` 的整數，重複排序多次取平均時間  
+  2. Worst Case：隨機產生並保留需排序最久的測資
 
-3.記憶體監控
-在排序前、排序後（尚未釋放）與釋放後，呼叫 Windows PSAPI API 讀取並輸出「Working Set Size」、「Peak Working Set Size」與「Pagefile Usage」，以觀察程式的記憶體使用與回收情況。
+- 紀錄排序前、後（含釋放記憶體前）記憶體使用量 
 
-### 解題策略
 
-1.分治遞迴 (Divide and Conquer)
-將陣列區間 [l,r] 分成 [l,m] 與 [m+1,r] 兩半，遞迴排序後再合併。
-
-2.Merge 函式
-Merge(initList, mergedList, l, m, r)：利用兩個指標同時掃描已排序的左右子陣列，將較小值依序放入 mergedList[l..r]，最後複製剩餘元素。
-
-3.暫存與複製
-每層遞迴配置大小為 n+1 的暫存陣列 tmp，合併完成後再以 std::copy 將 tmp[l..r] 複製回原陣列 a[l..r]，確保穩定性與正確性。
-
-4.平均情況測試
-重複讀取並排序同一筆資料 REPS 次以平滑背景干擾，計算所有次數累加的平均值。
-
-5.最壞情況樣本搜尋
-genRandom(n) 隨機產生一筆向量，重複多次試驗後保留排序耗時最長者作為最壞案例，再對其進行一次排序測量。
-
-6.記憶體使用量量測
-利用 GetProcessMemoryInfo 於關鍵階段輸出記憶體指標，觀察動態配置與釋放是否正常，並作為性能報告的一部分。
-
-## 程式實作
+### 程式實作
 
 以下為主要程式碼：
 
@@ -779,36 +730,32 @@ int main()
 }
 ```
 
-## 效能分析
+### 效能分析
 
-1.時間複雜度
-平均：Merge Sort 每次都將陣列一分為二再合併，無論輸入分佈為何，皆需執行 $\Theta(n\log n)$ 次比較與移動，因此平均時間複雜度為 $O(n\log n)$。
-最壞：同理，最壞情況（完全反序、已排序等）亦為 $O(n\log n)$。
+#### 時間複雜度
+Average Case = $O(nlogn)$  
+- 分割並將陣列對半遞迴：每層做 n 次合併  
+- 分析: $Ta(n)$ = $2Ta​(n/2)$ + $βn$ ⇒ $Ta(n)$ = $O(nlogn)$  
 
-2.空間複雜度
-額外空間：每次呼叫 mergeSort 時會配置大小為 $n+1$ 的暫存陣列 tmp，故空間複雜度為 $O(n)$。
-遞迴堆疊：分治遞迴深度為 $\log_2 n$，故堆疊空間為 $O(\log n)$。
+Worst Case = $O(nlogn)$  
+- 不論輸入排列，每層皆需合併所有 n 個元素   
+- 分析: $Tw​(n)$ = $2Tw​(n/2)$ + $αn$ ⇒ $Tw(n)$ = $O(nlogn)$  
 
-## 計時方式探討說明
-衡量排序耗時用的是 C++11 的 <chrono>，程式碼出現在 averageCase 和 worstCase 中
-```cpp
-auto t0 = chrono::high_resolution_clock::now();
-mergeSort(arr, n);
-auto t1 = chrono::high_resolution_clock::now();
-long long dt = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
 
-```
-1. 時鐘類型與選擇high_resolution_clock[解析度最高]，實作上通常等同於 steady_clock（保證單調、不受系統時間調整影響）或直接對應到最精細的硬體計時器。
-   其底層在 Windows 上會呼叫 QueryPerformanceCounter，解析度可達 數百奈秒 至 微秒。
-steady_clock
-明確保證「單調遞增」（monotonic），也是測量時間間隔的推薦選擇，不會因系統時鐘校正導致向前或向後跳動。
-單位與精度
-2.解析度與單位(microseconds)
-使用 duration_cast<chrono::microseconds> 來把時間差轉成微秒（μs），適合大多數排序測量（通常耗時在幾十到幾萬微秒之間）。
+#### 空間複雜度  
+Average Case = $O(n)$  
+- 輔助陣列**tmp**佔用 $O(n)$  
+- 遞迴呼叫最深 $O(logn)$  
+- 分析: $Sa(n)$ = $O(n)$ + $O(logn)$ ⇒ $Sa(n)$ = $O(n)$  
 
-## 測試與驗證
+Worst Case = $O(n)$    
+- 輔助陣列**tmp**佔用 $O(n)$  
+- 遞迴呼叫最深 $O(logn)$  
+- 分析: $Sw(n)$ = $O(n)$ + $O(logn)$ ⇒ $Sw(n)$ = $O(n)$  
 
-### 測試案例
+### 測試與驗證
+
+#### 測試案例
 
 | 測試案例 | Average Case(μs)| Worst Sort(μs) |
 |-------- |-----------------|----------------|
@@ -819,52 +766,21 @@ steady_clock
 | 4000    |      449.1      | 11241          |
 | 5000    |      578.788    | 13795          |
 
+
+#### 測試結果範例  
+![MergeSort_A](<https://github.com/wjx-zhao/data1/blob/8ab4e63de24819376d82bdd0326eb798bd338b5d/MergeSort_A.jpg> "MergeSort_A")  
+
 ### 圖表
 ![Merge Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Merge%20Sort.png)
 
+### 申論及開發報告
+1.穩定性：能保留相等元素的原始順序，適用於需要穩定排序的場景  
+- 保證表現：無論輸入分佈如何，皆能提供 $O(n\log n)$ 的最壞與平均效能  
+- 可平行化：左右兩半可獨立排序，具備良好擴展性  
 
-### 編譯與執行指令
+2.對外部排序友好:合併步驟只需順序掃描兩段已排序資料，適合對無法全部載入記憶體的巨量資料（外部檔案）進行排序  
 
-```shell
-$ g++ -std=c++17 -O2 merge_sort.cpp -o merge_sort.exe -lpsapi
-$ merge_sort.exe
-
-```
-
-### 結論
-
-1.正確性：程式能穩定完成 Merge Sort 的 Average Case（重複取平均）和 Worst Case（最慢樣本）測試，並正確輸出耗時與記憶體使用量。
-
-2.效能：實測證明無論輸入分佈為何，時間複雜度皆維持 $O(n\log n)$，符合 Merge Sort 理論。
-
-3.記憶體管理：動態配置的暫存陣列與遞迴堆疊皆於排序結束後正確釋放，無記憶體洩漏。
-
-4.適用範圍：對中大型資料（數千到數十萬筆）皆有穩定且可預期的效能，適合作為關鍵排序需求或教學示範。
-
-## 申論及開發報告
-
-### 選擇Merge Sort的原因
-
-選擇 Merge Sort 的原因
-
-1.穩定性：能保留相等元素的原始順序，適用於需要穩定排序的場景。
-(1)保證表現：無論輸入分佈如何，皆能提供 $O(n\log n)$ 的最壞與平均效能。
-(2)可並行化：左右兩半可獨立排序，具備良好擴展性。
-
-2.程式設計架構
-模組化：
-mergeSort／mergeSortRec 處理遞迴分割與合併。
-Merge 函式專責合併兩段已排序子陣列。
-
-3.效能量測：
-printMemoryUsage 結合 Windows PSAPI 讀取「Working Set」、「Peak Working Set」、「Pagefile Usage」。
-<chrono> 進行高解析度微秒級時間測量。
-
-4.測試驅動：
-Average Case 透過重複多次取平均降低系統抖動影響。
-Worst Case 以隨機試驗選出最慢樣本，貼近真實最差表現。
-
----------------------------------------------------------------------------------------------------------------------------------------------------------
+3.實作:僅對半遞迴並合併，易於推導與驗證  
 
 ## **Heap Sort**
 
