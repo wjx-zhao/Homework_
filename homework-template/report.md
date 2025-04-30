@@ -7,9 +7,9 @@
 
 ---  
 
-## **Insertion Sort**
+# **Insertion Sort**
 
-### 解題說明
+## 解題說明
 
 - **哨兵法**插入排序(Sentinel Insertion Sort)**為核心  
 - Case 選擇  
@@ -17,7 +17,7 @@
   2. Worst Case：在程式中生成 **反序** 排列 `[n, n−1, …, 1]`，並測量單次排序時間  
 - 紀錄排序前、後（含釋放記憶體前）記憶體使用量   
   
-### 程式實作
+## 程式實作
 
 以下為主要程式碼：  
 使用的標頭  
@@ -188,9 +188,9 @@ int main() {
 }
 ```
 
-### 效能分析
+## 效能分析
 
-##### 時間複雜度  
+#### 時間複雜度  
 Average Case = $O(n²)$  
 - 輸入是隨機排列，第 ` i ` 輪平均約要搬移 i/2 次  
 - 分析: $Ta(n)$ = $Ta​(n−1)$ + $β*i/2$ ⇒ $Ta(n)$ = $O((1+2+···+n)/2)$ = $O(n²)$  
@@ -199,7 +199,7 @@ Worst Case = $O(n²)$
 - 反序排列下，每次插入都要把先前所有元素逐一後移，等於第 i 輪做了 i 次比較與搬移  
 - 分析: $Tw​(n)$ = $Tw​(n−1)$ + $αn$ ⇒ $Tw(n)$ = $O(1+2+···+n)$ = $O(n²)$  
 
-#### 空間複雜度  
+### 空間複雜度  
 Average Case = $O(n)$  
 - 動態配置 `int*arr` 長度(n+1)  
 - 分析: $Sa(n)$ = $O(n)$  
@@ -208,9 +208,9 @@ Worst Case = $O(n)$
 - 動態配置 `int*arr` ⇒ $O(n)$  
 - 分析: $Sw(n)$ = $O(n)$  
 
-### 測試與驗證
+## 測試與驗證
 
-#### 測試案例
+### 測試案例
 
 | 測試案例 | Average Case(μs)| Worst Sort(μs) |
 |-------- |-----------------|----------------|
@@ -221,13 +221,13 @@ Worst Case = $O(n)$
 | 4000    |      7542.73    | 14954          |
 | 5000    |      19401.6    | 31262          |
 
-#### 測試結果範例  
+### 測試結果範例  
 ![InsertionSort_A](<https://github.com/wjx-zhao/data1/blob/4622439096734b94a739a512aa0bad27003b2302/InsertionSort_A.jpg> "InsertionSort_A")  
 
-#### 圖表
+### 圖表
 ![Insertion Sort](<https://raw.githubusercontent.com/Lin-3203/image/main/Insertion%20Sort.png>)  
 
-### 申論及開發報告
+## 申論及開發報告
 
 1.演算法簡潔易懂:邏輯演算方式非常直觀  
 
@@ -238,9 +238,9 @@ Worst Case = $O(n)$
 - 資料若已部分排序（或幾乎有序），插入排序的效能可逼近 $O(n)$，非常高效  
 
 
-## **Quick Sort**
+# **Quick Sort**
 
-### 解題說明
+## 解題說明
 - 分治遞迴(Divide and Conquer):對`left..j-1`與`j+1..right`子陣列遞迴呼叫 quickSort，直至子陣列長度≤1。  
 - 只對較小子陣列遞迴，其餘以迴圈處理，可控制遞迴深度，避免呼叫堆疊爆增  
 - Case 選擇  
@@ -248,7 +248,7 @@ Worst Case = $O(n)$
   2. Worst Case：將排序邏輯反轉，逆推出Worst Case  
 - 紀錄排序前、後（含釋放記憶體前）記憶體使用量  
 
-### 程式實作
+## 程式實作
 
 以下為主要程式碼：
 這是使用到的標頭檔  
@@ -427,9 +427,9 @@ int main()
 }
 ```
 
-### 效能分析
+## 效能分析
 
-#### 時間複雜度  
+### 時間複雜度  
 Average Case = $O(nlogn)$  
 - 當 pivot 每次大致能把子陣列對半分割，遞迴深度 ≈ $log n$ ，且每層需 $O(n)$ 處理，所以為 $O(nlogn)$  
 - 分析: $Ta(n)$ = $2Ta(n/2)$ + $cn% ⇒ $Ta(n)$ = $O(nlogn)$  
@@ -438,7 +438,7 @@ Worst Case = $O(n²)$
 - 每次選擇的 pivot 恰好是子陣列的最小值，導致分割不平衡。左子陣列長度為 0，右子陣列長度為 $n−1$
 - 分析: $Tw(n)$ = $Tw(n-1)$ + $cn$ ⇒ $Tw(n)$ = $O(n²)$  
 
-#### 空間複雜度
+### 空間複雜度
 Average Case = $O(n)$  
 - 動態配置 `int arr[n+2]` ⇒ $O(n)$  
 - 呼叫推疊 ⇒ $O(logn)$  
@@ -449,9 +449,9 @@ Worst Case = $O(n)$
 - 呼叫推疊 ⇒ $O(n)$  
 - 分析: $Sw(n)$ = $Sd(n)$ + $Ss(n)$ = $O(n)$ + $O(n)$ = $O(n)$  
 
-### 測試與驗證
+## 測試與驗證
 
-#### 測試案例
+### 測試案例
 
 | 測試案例 | Average Case(μs)| Worst Sort(μs) |
 |-------- |-----------------|----------------|
@@ -462,13 +462,13 @@ Worst Case = $O(n)$
 | 4000    |      449.1      | 11241          |
 | 5000    |      578.788    | 13795          |
 
-#### 測試結果範例
+### 測試結果範例
 ![QuickSort_A](<https://github.com/wjx-zhao/data1/blob/bc652be7bcd38f48e35dba28272d7d9faa6937e8/QuickSort_A.jpg> "QuickSort_A")  
 
-#### 圖表
+### 圖表
 ![Quick Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Quick%20Sort.png)
 
-### 申論及開發報告
+## 申論及開發報告
 
 1.平均效能卓越:隨機或平均情況下具有 $O(nlogn)$ 的時間複雜度，對中大型資料集的排序效能遠優於 $O(n²)$ 的演算法  
 
@@ -477,9 +477,9 @@ Worst Case = $O(n)$
 3.提升穩定性與實務效能:可以透過尾遞迴優化、隨機化 pivot、三數取中等技術，控制最壞情況遞迴深度。  
 
 
-## **Merge Sort**
+# **Merge Sort**
 
-### 解題說明
+## 解題說明
 - 分治遞迴(Divide and Conquer):將陣列區間 [l,r] 分成 [l,m] 與 [m+1,r] 兩半，遞迴排序後再合併。  
 
 - Merge函式:Merge(initList, mergedList, l, m, r)：利用兩個指標同時掃描已排序的左右子陣列，將較小值依序放入 mergedList[l..r]，最後複製剩餘元素。
@@ -491,7 +491,7 @@ Worst Case = $O(n)$
 - 紀錄排序前、後（含釋放記憶體前）記憶體使用量 
 
 
-### 程式實作
+## 程式實作
 
 以下為主要程式碼：
 這是使用到的標頭檔  
@@ -721,9 +721,9 @@ int main()
 }
 ```
 
-### 效能分析
+## 效能分析
 
-#### 時間複雜度
+### 時間複雜度
 Average Case = $O(nlogn)$  
 - 分割並將陣列對半遞迴：每層做 n 次合併  
 - 分析: $Ta(n)$ = $2Ta​(n/2)$ + $βn$ ⇒ $Ta(n)$ = $O(nlogn)$  
@@ -733,7 +733,7 @@ Worst Case = $O(nlogn)$
 - 分析: $Tw​(n)$ = $2Tw​(n/2)$ + $αn$ ⇒ $Tw(n)$ = $O(nlogn)$  
 
 
-#### 空間複雜度  
+### 空間複雜度  
 Average Case = $O(n)$  
 - 輔助陣列**tmp**佔用 $O(n)$  
 - 遞迴呼叫最深 $O(logn)$  
@@ -744,9 +744,9 @@ Worst Case = $O(n)$
 - 遞迴呼叫最深 $O(logn)$  
 - 分析: $Sw(n)$ = $O(n)$ + $O(logn)$ ⇒ $Sw(n)$ = $O(n)$  
 
-### 測試與驗證
+## 測試與驗證
 
-#### 測試案例
+### 測試案例
 
 | 測試案例 | Average Case(μs)| Worst Sort(μs) |
 |-------- |-----------------|----------------|
@@ -758,13 +758,13 @@ Worst Case = $O(n)$
 | 5000    |      578.788    | 13795          |
 
 
-#### 測試結果範例  
+### 測試結果範例  
 ![MergeSort_A](<https://github.com/wjx-zhao/data1/blob/8ab4e63de24819376d82bdd0326eb798bd338b5d/MergeSort_A.jpg> "MergeSort_A")  
 
 ### 圖表
 ![Merge Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Merge%20Sort.png)
 
-### 申論及開發報告
+## 申論及開發報告
 1.穩定性：能保留相等元素的原始順序，適用於需要穩定排序的場景  
 - 保證表現：無論輸入分佈如何，皆能提供 $O(n\log n)$ 的最壞與平均效能  
 - 可平行化：左右兩半可獨立排序，具備良好擴展性  
@@ -773,9 +773,9 @@ Worst Case = $O(n)$
 
 3.實作:僅對半遞迴並合併，易於推導與驗證  
 
-## **Heap Sort**
+# **Heap Sort**
 
-### 解題說明
+## 解題說明
 
 - Heapify:  
 1. 從最後一個非葉節點 ⌊n/2⌋ 開始，呼叫 Adjust(a, i, n) 將以節點 i 為根的子樹調整為 max‐heap  
@@ -792,7 +792,7 @@ Worst Case = $O(n)$
  
 - 紀錄排序前、後（含釋放記憶體前）記憶體使用量 
 
-### 程式實作
+## 程式實作
 
 以下為主要程式碼：
 這是使用到的標頭檔  
@@ -1026,9 +1026,9 @@ int main()
 }
 ```
 
-### 效能分析
+## 效能分析
 
-#### 時間複雜度  
+### 時間複雜度  
 Average Case = $O(nlogn)$  
 - heapify：從最後一個非葉節點向上調整，共需 $\sum_{i=1}^{\lfloor n/2\rfloor} O(\log n) = O(n)$  
 - 取出最大值並重建堆：共做`n−1 次`，每次調整一個長度為 $\sum_{i=2}^n O(\log i) = O\Bigl(\sum_{i=2}^n \log n\Bigr) = O(n\log n)$  
@@ -1040,7 +1040,7 @@ Worst Case = $O(nlogn)$
 - 取出並heapify： $\sum_{i=2}^n O(\log i) = O(n\log n)$  
 - 分析: $T_w(n) = O(n) + \sum_{i=2}^n O(\log i) = O(n\log n)$  
 
-#### 空間複雜度  
+### 空間複雜度  
 Average Case = $O(1)$  
 - 原地演算:僅需常數個輔助變數 e, j,···  
 - 分析: $Sa(n)$ = $O(1)$  
@@ -1049,9 +1049,9 @@ Worst Case = $O(1)$
 - 原地演算:僅需常數個輔助變數 e, j,···   
 - 分析: $Sw(n)$ = $O(1)$  
 
-### 測試與驗證
+## 測試與驗證
 
-#### 測試案例
+### 測試案例
 
 | 測試案例 | Average Case(μs)| Worst Sort(μs) |
 |-------- |-----------------|----------------|
@@ -1062,10 +1062,10 @@ Worst Case = $O(1)$
 | 4000    |      665.06     | 1133           |
 | 5000    |      854.194    | 1482           |
 
-#### 測試結果範例  
+### 測試結果範例  
 ![HeapSort_A](<https://github.com/wjx-zhao/data1/blob/3c6adcde38ed85560ec8f0584b23681a966a05a6/HeapSort_A.jpg> "HeapSort_A")  
 
-#### 圖表
+### 圖表
 ![Heap Sort](https://raw.githubusercontent.com/Lin-3203/image/main/Heap%20Sort.png)
 
 ### 申論及開發報告
@@ -1073,9 +1073,9 @@ Worst Case = $O(1)$
 2. 複雜度:無論輸入分佈皆維持 O(nlogn)  
 3. 原地排序:只使用常數級額外空間（除測試所需之動態陣列），不需要像 Merge Sort 那樣額外分配暫存陣列  
 
-## **Composite Sort**
+# **Composite Sort**
 
-### 解題說明
+## 解題說明
 
 - 將四種排序法彙整
   1. InsertionSortg:使用哨兵法
@@ -1093,7 +1093,7 @@ Worst Case = $O(1)$
 - 紀錄排序前、後（含釋放記憶體前）記憶體使用量  
 
 
-### 程式實作
+## 程式實作
 使用到的標頭  
 ```cpp
 #include <iostream>
@@ -1447,9 +1447,9 @@ int main()
     return 0;
 }
 ```
-### 測試與驗證
+## 測試與驗證
 
-#### 測試案例
+### 測試案例
 
 | 測試案例 | Average Case(μs)| Worst Sort(μs) |
 |-------- |-----------------|----------------|
@@ -1464,9 +1464,9 @@ int main()
 - Average Case:**QuickSort**會是最快的  
 - Worst Sort:**HeapSort**會是最快的  
 
-### 申論及開發報告
+## 申論及開發報告
 
-#### Composite Sort優化  
+### Composite Sort優化  
 若依照之前的程式下去比較有點不公平，會有單演算法一直是最快的，如果要公平的比較  
 1. Merge Sort的暫存陣列只配置一次  
 2. 把QuickSort的亂數抽樣移到genWorstCase之外:只花WorstCase資料產生時用亂數，在測平均時改用固定pivot，減少呼叫亂數的花費  
